@@ -40,7 +40,7 @@ android {
 dependencies {
 
     implementation(libs.androidx.recyclerview)
-    val roomVersion = "2.6.1" // Check the Android Developers site for the latest stable version
+    val roomVersion = "2.8.1" // Check the Android Developers site for the latest stable version
 
 // Room runtime, contains the main library functionality
     implementation("androidx.room:room-runtime:$roomVersion")
