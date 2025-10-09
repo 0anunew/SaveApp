@@ -39,6 +39,7 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.recyclerview)
     val roomVersion = "2.6.1" // Check the Android Developers site for the latest stable version
 
 // Room runtime, contains the main library functionality

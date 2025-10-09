@@ -1,4 +1,5 @@
 package com.example.saveapp
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -17,6 +19,9 @@ class AddUpdateActivity : AppCompatActivity() {
     private lateinit var editTitleText: EditText
     private lateinit var editContentText: EditText
     private lateinit var numberPickerPriority: NumberPicker
+
+    private lateinit var saveButton: AppCompatButton
+    private lateinit var closeButton: AppCompatButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,17 +41,22 @@ class AddUpdateActivity : AppCompatActivity() {
         editTitleText = findViewById(R.id.edit_text_title)
         editContentText = findViewById(R.id.edit_text_content)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close)
-        title = "Add Note"
+        saveButton = findViewById(R.id.save_button)
+        saveButton.setOnClickListener {
+            saveNote()
+        }
+        closeButton = findViewById(R.id.close_button)
+        closeButton.setOnClickListener {
+            finish()
+        }
     }
 
-    fun saveNote(){
+    fun saveNote() {
         val title = editTitleText.text.toString()
         val content = editContentText.text.toString()
         val priority = numberPickerPriority.value
 
-        if (title.trim().isEmpty() || content.trim().isEmpty()){
+        if (title.trim().isEmpty() || content.trim().isEmpty()) {
             Toast.makeText(this, "Please insert a title and content", Toast.LENGTH_SHORT).show()
             return
         }
@@ -57,20 +67,5 @@ class AddUpdateActivity : AppCompatActivity() {
             putExtra(Constants.EXTRA_PRIORITY, priority)
         })
         finish()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.save_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.save_menu_item -> {
-                saveNote()
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

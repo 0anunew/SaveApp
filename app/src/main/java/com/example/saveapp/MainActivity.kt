@@ -18,8 +18,8 @@ import kotlin.getValue
 class MainActivity : AppCompatActivity() {
 
     @Suppress("UNCHECKED_CAST")
-    private val factory: ViewModelProvider.Factory = object :ViewModelProvider.Factory {
-        override fun <T:ViewModel> create(modelClass: Class<T>):T{
+    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return NoteViewModel(application) as T
         }
     }
@@ -50,20 +50,21 @@ class MainActivity : AppCompatActivity() {
             notesAdaptor.setNotes(it)
         }
 
-        val getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Constants.REQUEST_CODE) {
-                val saveTitle = it.data?.getStringExtra(Constants.EXTRA_TITLE)
-                val saveContent = it.data?.getStringExtra(Constants.EXTRA_DESCRIPTION)
-                val savePriority = it.data?.getIntExtra(Constants.EXTRA_PRIORITY, 1)
+        val getResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == Constants.REQUEST_CODE) {
+                    val saveTitle = it.data?.getStringExtra(Constants.EXTRA_TITLE)
+                    val saveContent = it.data?.getStringExtra(Constants.EXTRA_DESCRIPTION)
+                    val savePriority = it.data?.getIntExtra(Constants.EXTRA_PRIORITY, 1)
 
-                val  saveNote = Note(saveTitle!!, saveContent!!, savePriority!!)
-                noteViewModel.addNote(saveNote)
+                    val saveNote = Note(saveTitle!!, saveContent!!, savePriority!!)
+                    noteViewModel.addNote(saveNote)
+                }
             }
-        }
 
         addButton.setOnClickListener {
             val intent = Intent(this, AddUpdateActivity::class.java)
-            startActivity(intent)
+            getResult.launch(intent)
         }
     }
 }
