@@ -20,7 +20,7 @@ interface NoteDAO{
     fun getAllNotes(): LiveData<MutableList<Note>>
 
     @Query("DELETE FROM note_table")
-    fun deleteAllNotes()
+    suspend fun deleteAllNotes()
 
     @Query("SELECT * FROM note_table WHERE noteTableID = :id")
     fun getNote(id: Int): Note

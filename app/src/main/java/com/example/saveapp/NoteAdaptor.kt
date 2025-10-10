@@ -5,8 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.saveapp.R
-import com.example.saveapp.Note
+
 
 class NoteAdaptor() : RecyclerView.Adapter<NoteAdaptor.NoteViewHolder>() {
     private var notesList = mutableListOf<Note>()
@@ -32,6 +31,9 @@ class NoteAdaptor() : RecyclerView.Adapter<NoteAdaptor.NoteViewHolder>() {
         notesList = notes
         notifyDataSetChanged()
     }
+
+    fun getNoteAt(position: Int) = notesList[position]
+
     inner class NoteViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var textTitle: TextView = itemView.findViewById(R.id.title)
         var textContent: TextView = itemView.findViewById(R.id.content)

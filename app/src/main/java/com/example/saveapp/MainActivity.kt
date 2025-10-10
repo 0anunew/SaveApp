@@ -2,33 +2,28 @@ package com.example.saveapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlin.getValue
 
 class MainActivity : AppCompatActivity() {
 
-    @Suppress("UNCHECKED_CAST")
-    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return NoteViewModel(application) as T
-        }
-    }
-
-    private val noteViewModel: NoteViewModel by viewModels { factory }
+    private lateinit var noteViewModel: NoteViewModel
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var notesAdaptor: NoteAdaptor
     private lateinit var addButton: FloatingActionButton
+    private lateinit var menuToolB : Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +34,20 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        menuToolB = findViewById(R.id.my_toolbar)
+        setSupportActionBar(menuToolB)
+
         addButton = findViewById(R.id.add_note_button)
         recyclerView = findViewById(R.id.recycler_view)
         notesAdaptor = NoteAdaptor()
         recyclerView.adapter = notesAdaptor
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        noteViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory(application)
+        )[NoteViewModel::class.java]
 
         noteViewModel.allNotes.observe(this) {
             notesAdaptor.setNotes(it)
@@ -66,5 +69,37 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddUpdateActivity::class.java)
             getResult.launch(intent)
         }
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                noteViewModel.deleteNote(notesAdaptor.getNoteAt(viewHolder.bindingAdapterPosition))
+            }
+        }).attachToRecyclerView(this.recyclerView)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.delete_all_menu -> {
+                noteViewModel.deleteAllNotes()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
