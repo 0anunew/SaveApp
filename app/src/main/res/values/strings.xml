@@ -5,5 +5,9 @@
     <string name="title">Title</string>
     <string name="save">Save</string>
     <string name="add">Add</string>
-    <string name="close">X</string> />
+    <string name="close">X</string>
+    <string name="update">Update</string>
+    <string name="add_title">Add Title</string>
+    <string name="add_content">Add Content</string>
+    />
 </resources>

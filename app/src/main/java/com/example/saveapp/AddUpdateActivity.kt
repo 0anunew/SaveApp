@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.coroutines.Continuation
 
 
 class AddUpdateActivity : AppCompatActivity() {
@@ -47,6 +48,20 @@ class AddUpdateActivity : AppCompatActivity() {
         closeButton.setOnClickListener {
             finish()
         }
+
+        if (intent.hasExtra(Constants.EXTRA_TITLE)) {
+            editTitleText.setText(intent.getStringExtra(Constants.EXTRA_TITLE))
+            editContentText.setText(intent.getStringExtra(Constants.EXTRA_CONTENT))
+            numberPickerPriority.value = intent.getIntExtra(Constants.EXTRA_PRIORITY, 1)
+            saveButton.text = getString(R.string.update)
+        } else {
+            editTitleText.setHint(R.string.add_title)
+            editContentText.setHint(R.string.add_content)
+            numberPickerPriority.value = 1
+            saveButton.text = getString(R.string.save)
+        }
+
+
     }
 
     fun saveNote() {
@@ -59,11 +74,22 @@ class AddUpdateActivity : AppCompatActivity() {
             return
         }
 
-        setResult(Constants.REQUEST_CODE, Intent().apply {
-            putExtra(Constants.EXTRA_TITLE, title)
-            putExtra(Constants.EXTRA_DESCRIPTION, content)
-            putExtra(Constants.EXTRA_PRIORITY, priority)
-        })
+        val extraID = intent.getIntExtra(Constants.EXTRA_ID, -1)
+
+        if (extraID != -1) {
+            setResult(Constants.EDIT_REQUEST_CODE, Intent().apply {
+                putExtra(Constants.EXTRA_TITLE, title)
+                putExtra(Constants.EXTRA_CONTENT, content)
+                putExtra(Constants.EXTRA_PRIORITY, priority)
+                putExtra(Constants.EXTRA_ID, extraID)
+            })
+        } else {
+            setResult(Constants.ADD_REQUEST_CODE, Intent().apply {
+                putExtra(Constants.EXTRA_TITLE, title)
+                putExtra(Constants.EXTRA_CONTENT, content)
+                putExtra(Constants.EXTRA_PRIORITY, priority)
+            })
+        }
         finish()
     }
 }
